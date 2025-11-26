@@ -57,6 +57,20 @@ app.post('/upload', (req, res) => {
   });
 });
 
+// Endpoint para eliminar todos los archivos .xlsx en la carpeta XLSX
+app.delete('/upload-all-xlsx', (req, res) => {
+  fs.readdir(XLSX_DIR, (err, files) => {
+    if (err) return res.status(500).json({ ok: false, error: 'No se pudo leer la carpeta XLSX' });
+    let deleted = 0;
+    files.forEach(f => {
+      if (f.endsWith('.xlsx')) {
+        try { fs.unlinkSync(path.join(XLSX_DIR, f)); deleted++; } catch {}
+      }
+    });
+    res.json({ ok: true, deleted });
+  });
+});
+
 // Escuchar en 0.0.0.0 para PaaS
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor activo en puerto ${PORT}`);

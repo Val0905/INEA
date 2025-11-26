@@ -52,6 +52,9 @@ async function saveFilesToServer(files){
   let lastErr = null;
   for (const base of candidates) {
     try {
+      // 1. Eliminar archivos previos antes de subir los nuevos
+      await deleteAllXlsx(base);
+      // 2. Subir los nuevos archivos
       const filesSaved = await uploadToBase(base, files);
       return filesSaved; // éxito
     } catch (e) {
@@ -60,6 +63,13 @@ async function saveFilesToServer(files){
     }
   }
   throw lastErr || new Error('No se pudo contactar al backend');
+}
+
+// Llama a DELETE /upload-all-xlsx para limpiar la carpeta antes de subir
+async function deleteAllXlsx(base) {
+  const url = (base || '') + '/upload-all-xlsx';
+  // Si el endpoint no existe, ignora el error (para compatibilidad)
+  await fetch(url, { method: 'DELETE' }).catch(() => {});
 }
 
 // Intenta subir a una base concreta
