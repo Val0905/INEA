@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Consulta individual</title>
+    <link rel="stylesheet" href="../CSS/inicio.css?v=1" />
+    <style>
+      /* Overrides: mostrar etiquetas completas en los resultados */
+      .consulta-result th{
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+      }
+      /* Layout: form más angosto y mayor separación (solo desktop) */
+      @media (min-width: 980px){
+        .consulta-page{ max-width: 1280px; }                  /* más ancho total */
+        .consulta-grid{
+          grid-template-columns: 150px minmax(0, 1fr);        /* antes 160px */
+          column-gap: 64px;                                   /* antes 56px */
+          align-items: start;
+        }
+        .consulta-form{
+          width: 150px;            /* antes 160px */
+          max-width: 150px;
+          box-sizing: border-box;  /* evita que borde/padding “crezcan” el ancho */
+        }
+        /* Evitar que el input desborde y mantener alineación con botones */
+        .consulta-form input[type="text"]{
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .consulta-result{ max-width: none; }                  /* resultados ocupan todo */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- React + ReactDOM + Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <!-- SheetJS para leer .xlsx en el navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- App de consulta individual -->
+    <script type="text/babel" src="./consulta-individual.jsx"></script>
+  </body>
+</html>

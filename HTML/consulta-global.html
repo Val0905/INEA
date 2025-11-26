@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Consulta global</title>
+    <link rel="stylesheet" href="../CSS/inicio.css" />
+  </head>
+  <body>
+
+    <div id="root"></div>
+
+    <!-- React + ReactDOM + Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <!-- SheetJS -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js + react-chartjs-2 (UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-chartjs-2@5.2.0/dist/react-chartjs-2.umd.min.js"></script>
+
+    <!-- Shim para Excel: intercepta fetch de .xlsx y sirve los buffers subidos -->
+    <script src="../JS/upload-card.js"></script>
+
+    <!-- Aviso si no hay datos listos aún (opcional) -->
+    <script>
+      (function(){
+        function checkReady(){
+          if (!window.__EXCEL_READY__) {
+            console.warn('Excel no cargado desde memoria. Sube ATNYSEG y SIGASTI en la pantalla principal.');
+          }
+        }
+        window.addEventListener('excel:dataReady', checkReady);
+        document.addEventListener('DOMContentLoaded', checkReady);
+      })();
+    </script>
+
+    <!-- App React -->
+    <script type="text/babel" src="./consulta-global.jsx"></script>
+  </body>
+</html>

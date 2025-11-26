@@ -1,0 +1,1016 @@
+/* Estilos globales y del splash */
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #faf7fb;
+  color: #222;
+}
+
+#splash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  z-index: 9999;
+  transition: opacity 1s ease, visibility 1s ease;
+}
+
+  .menu {
+    /* quitar contenedor blanco */
+    background: transparent;
+    padding: 12px 8px 12px 8px;
+    border-radius: 0;
+    position: relative;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinear todo el contenido del menú a la izquierda */
+  }
+#splash.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Splash: solo define la imagen sin anidaciones inválidas */
+#splash img {
+  max-width: 60%;
+  height: auto;
+  display: block;
+}
+
+/* Contenido principal (oculto detrás del splash) */
+#app {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+#app.visible {
+  opacity: 1;
+}
+
+/* Contenedor principal */
+.main-container {
+  padding: 20px 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  max-width: 1100px; /* ajuste leve */
+  /* centrar el contenedor horizontalmente */
+  margin: 28px auto;
+  padding: 24px 16px;
+}
+
+/* Estilos del menú principal */
+.menu {
+  background: transparent;
+  padding: 12px 0; /* elimina padding izquierdo extra */
+  border-radius: 0;
+  position: relative;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Alinear todo el contenido del menú a la izquierda */
+}
+
+.menu-header{
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* izquierda (espaciador) - título - logo */
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  position: relative;
+  width: 100%;
+}
+
+.menu-header::before{
+  content: '';
+  /* ocupa la primera columna como espaciador para centrar el h2 */
+}
+.menu-header h2{
+  background: linear-gradient(90deg, #9F2241 , #9F2241 );
+  color: white;
+  padding: 16px 28px;
+  border-radius: 28px;
+  font-size: 34px;
+  margin: 0 auto;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 26px rgba(91,47,166,0.18);
+  position: static;
+  transform: none;
+  z-index: 1;
+  grid-column: 2;
+  text-align: center;
+  max-width: 100%;
+}
+
+.instituto-logo{
+  /* pasar de absolute a estático y ubicarlo en la 3ª columna */
+  position: static;
+  grid-column: 3;
+  justify-self: end;
+  align-self: center;
+  max-height: 72px;
+  height: auto;
+}
+
+/* Línea decorativa bajo el título */
+.menu-divider{
+  height: 6px;
+  width: 240px;
+  margin: 12px auto 18px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #9F2241 , #9F2241 );
+  opacity: .95;
+}
+
+.menu-columns{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 18px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: auto; /* Hacer que el bloque de columnas no ocupe todo el ancho, sino su contenido */
+  max-width: none; /* permite encoger al contenido */
+  margin: 0;
+  padding: 8px 0;
+}
+.menu-columns .col{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 240px;    /* ancho fijo de columna */
+  min-width: 240px;   /* consistente con el basis */
+}
+
+/* Ajustes en los botones del menú */
+.menu-item{
+  display: block;
+  margin: 6px 0;
+  padding: 12px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 14px;
+  border: 1px solid rgba(91,47,166,.12);
+  background: linear-gradient(180deg, rgba(122,73,214,.12), rgba(107,63,174,.06));
+  color: #2b2b2b;
+  font-size: 20px;      /* lectura cómoda para una página */
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  box-shadow: 0 6px 12px rgba(91,47,166,.06);
+  text-align: left;
+}
+.menu-item:hover{
+  background: linear-gradient(180deg, rgba(122,73,214,.22), rgba(107,63,174,.16));
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(91,47,166,.10);
+}
+
+/* ===== Botones más grandes ===== */
+.menu-item{
+  /* escritorio */
+  font-size: 22px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  min-height: 56px;
+  line-height: 1.35;
+}
+
+@media (max-width:900px){
+  .menu-item{
+    /* móvil/tablet */
+    font-size: 20px;
+    padding: 14px 16px;
+    min-height: 52px;
+  }
+}
+
+/* Responsive: columnas apiladas en pantallas pequeñas */
+@media (max-width:900px){
+  .main-container{ padding: 16px }
+  .menu-header h2{ font-size: 22px; padding: 10px 16px }
+  .instituto-logo{ right: 8px; max-height: 40px }
+  .menu-columns{ gap: 10px }
+  .menu-columns .col{ min-width: 100%; flex: 1 1 100% } /* apilar */
+  .menu-item{ font-size: 18px; padding: 10px 12px }
+  /* En móvil, que las columnas/botones vuelvan a ocupar el 100% */
+  .menu-columns{
+    width: 100%;
+  }
+  .menu-columns .col{
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+}
+
+/* Contenedor para columnas + panel derecho */
+.menu-content{
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Panel derecho con el h3 del ítem seleccionado */
+.menu-detail{
+  flex: 1 1 auto;
+  min-width: 260px;
+  padding: 8px 12px;
+  margin-left: auto;
+  max-width: 760px; /* antes 440px, más espacio para 2 columnas */
+  background: #ffffff;
+  border: 1px solid rgba(91,47,166,.12);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(91,47,166,.08);
+  padding: 16px 20px; /* más aire para el contenido */
+}
+
+.menu-detail h3{
+  margin: 6px auto;      /* centra el bloque */
+  font-size: 22px;
+  font-weight: 800;
+  color: #9F2241;
+  text-align: center;    /* antes right */
+  padding-right: 0;      /* antes 80px */
+}
+
+/* Acciones debajo del H3 (solo aparecen con selección) */
+.menu-detail .menu-actions{
+  display: flex;
+  gap: 10px;
+  margin-top: 24px; /* antes 8px */
+  flex-wrap: wrap;
+  justify-content: center; /* antes flex-end */
+  align-items: center;
+  gap: 16px;               /* separación uniforme */
+}
+.action-btn{
+  appearance: none;
+  border: 1px solid rgba(159,34,65,0.4);
+  background: #ffffff;
+  color: #9F2241;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+  box-shadow: 0 4px 10px rgba(159,34,65,0.08);
+  font-size: 18px;
+  padding: 14px 20px;
+  min-height: 48px;
+}
+.action-btn:hover{
+  background: rgba(159,34,65,0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(159,34,65,0.12);
+}
+.action-btn.primary{
+  background: linear-gradient(90deg, #9F2241 , #9F2241);
+  color: #fff;
+  border-color: #9F2241;
+}
+.action-btn.primary:hover{
+  background: linear-gradient(90deg, #8b1e39 , #8b1e39);
+}
+
+@media (max-width:900px){
+  .menu-detail .menu-actions{
+    justify-content: center; /* centrar también en móvil */
+    margin-top: 16px;
+  }
+  .menu-detail .menu-actions .action-btn{
+    font-size: 17px;
+    padding: 12px 18px;
+    min-height: 44px;
+  }
+}
+
+/* Responsive: apilar panel bajo el menú in pantallas pequeñas */
+@media (max-width:900px){
+  .menu-content{
+    flex-direction: column;
+    gap: 12px;
+  }
+  .menu-detail{
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+  .menu-detail h3{
+    text-align: center;  /* también centrado en móvil */
+  }
+}
+
+/* Card: panel de detalle más legible */
+.menu-detail{
+  /* ...existing code... */
+  background: #ffffff;
+  border: 1px solid rgba(91,47,166,.12);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(91,47,166,.08);
+  padding: 16px 20px; /* más aire para el contenido */
+}
+
+/* Tabla de datos: legible y con zebra */
+.menu-detail table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.menu-detail tbody tr{
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.menu-detail tbody tr:last-child{
+  border-bottom: none;
+}
+.menu-detail th,
+.menu-detail td{
+  padding: 10px 12px;
+  vertical-align: top;
+  white-space: normal !important;   /* antes podía venir nowrap desde JSX */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.menu-detail th{
+  width: auto;                       /* anula width:42% anterior */
+  color: #4a4a4a;
+  font-weight: 800;
+  letter-spacing: .2px;
+  background: rgba(159,34,65,.10);   /* un poco más sólido para abarcar bien */
+  border-right: 1px solid rgba(0,0,0,.08);
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+.menu-detail td{
+  color: #222;
+  background: #fff;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+/* Zebra suave en filas impares para resaltar valores */
+.menu-detail tbody tr:nth-child(odd) td{
+  background: #faf7fb;
+}
+
+/* Estado de carga (si aparece el texto Cargando...) */
+.menu-detail .loading{
+  text-align: center;
+  padding: 12px;
+  color: #6b6b6b;
+}
+
+/* Móvil: convertir filas en “tarjetas” apiladas (label arriba, valor abajo) */
+@media (max-width: 700px){
+  .menu-detail table,
+  .menu-detail tbody,
+  .menu-detail tr,
+  .menu-detail th,
+  .menu-detail td{
+    display: block;
+    width: 100%;
+  }
+  .menu-detail tbody tr{
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 10px;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .menu-detail th{
+    background: transparent;
+    border-right: 0;
+    padding: 8px 6px 2px;
+    color: #7a7a7a;
+  }
+  .menu-detail td{
+    background: transparent !important;
+    padding: 2px 6px 8px;
+    color: #1f1f1f;
+  }
+}
+
+/* ===== Dos columnas balanceadas en el panel (sin títulos de grupo) ===== */
+@media (min-width: 900px){
+  /* más ancho para que quepan 2 columnas cómodas */
+  .menu-detail{
+    max-width: 860px; /* un poco más de ancho para evitar cortes */
+  }
+
+  .menu-detail table{ display: block !important; }
+
+  /* Quitar títulos/pseudo-elementos y grid anterior */
+  .menu-detail tbody::before,
+  .menu-detail tbody::after{
+    content: none !important;
+    display: none !important;
+  }
+
+  /* Dos columnas balanceadas y alineadas al mismo nivel */
+  .menu-detail tbody{
+    display: block !important;
+    column-count: 2 !important;
+    column-gap: 20px !important;
+    column-fill: balance;
+  }
+
+  /* Cada fila como tarjeta que no se parte entre columnas */
+  .menu-detail tbody tr{
+    display: grid !important;
+    grid-template-columns: 48% 1fr !important; /* antes ~42% */
+    break-inside: avoid;
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 10px;
+    background: #fff;
+    margin: 0 0 12px;
+  }
+
+  /* Apariencia de celdas dentro de la tarjeta */
+  .menu-detail th{
+    background: rgba(159,34,65,.10);
+    border-right: 1px solid rgba(0,0,0,.06);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+  }
+  .menu-detail td{
+    background: #fff;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  /* Sin zebra en modo tarjetas a 2 columnas */
+  .menu-detail tbody tr:nth-child(odd) td{ background: #fff; }
+}
+
+/* Nota: en móvil (<700px) se mantiene la versión en una sola columna que ya tienes */
+
+/* Accesibilidad: menos animación si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce){
+  #splash, #app, .menu-item{ transition: none }
+}
+
+/* Badge de región seleccionada en el panel derecho */
+.menu-detail .region-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  margin: 4px auto 0;
+  border-radius: 999px;
+  background: rgba(159,34,65,.10);
+  color: #9F2241;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+/* ===== Estilos específicos de la página Consulta Individual ===== */
+.consulta-page{
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 20px 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.consulta-header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  position: relative;
+}
+.consulta-header h2{
+  background: linear-gradient(90deg, #9F2241, #9F2241);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 26px;
+  font-size: 24px;
+  margin: 0;
+  font-weight: 800;
+  box-shadow: 0 8px 26px rgba(91,47,166,0.18);
+}
+.consulta-header .instituto-logo{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 60px;
+  height: auto;
+}
+.consulta-divider{
+  height: 6px;
+  width: 200px;
+  margin: 12px auto 18px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #9F2241, #9F2241);
+  opacity: .95;
+}
+
+/* Layout simple */
+.consulta-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 980px){
+  .consulta-grid{
+    grid-template-columns: 380px 1fr;
+  }
+}
+
+/* Card formulario */
+.consulta-form{
+  border: 1px solid rgba(91,47,166,.12);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(91,47,166,.08);
+  padding: 14px;
+}
+.consulta-form label{
+  font-weight: 800;
+  color: #4a4a4a;
+  margin-bottom: 6px;
+  display: block;
+}
+.consulta-form input[type="text"]{
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(91,47,166,.22);
+  font-size: 16px;
+  outline: none;
+}
+.consulta-actions{
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Botones (sin Bootstrap) */
+.consulta-page .btn{
+  appearance: none;
+  border: 1px solid rgba(159,34,65,0.4);
+  background: #ffffff;
+  color: #9F2241;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+  box-shadow: 0 4px 10px rgba(159,34,65,0.08);
+}
+.consulta-page .btn:hover{
+  background: rgba(159,34,65,0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(159,34,65,0.12);
+}
+.consulta-page .btn-primary{
+  background: linear-gradient(90deg, #9F2241, #9F2241);
+  color: #fff;
+  border-color: #9F2241;
+}
+.consulta-page .btn-primary:hover{
+  background: linear-gradient(90deg, #8b1e39, #8b1e39);
+}
+
+/* Card resultado (reutiliza esquema visual del panel) */
+.consulta-result{
+  border: 1px solid rgba(91,47,166,.12);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(91,47,166,.08);
+  padding: 16px 20px;
+}
+.consulta-result h3{
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #9F2241;
+  text-align: left;
+}
+
+/* Tabla legible con zebra y dos columnas internas por fila */
+.consulta-result table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.consulta-result tbody tr{
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 10px;
+  margin: 0 0 10px 0;
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  background: #fff;
+}
+.consulta-result th,
+.consulta-result td{
+  padding: 10px 12px;
+  vertical-align: top;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.consulta-result th{
+  color: #5a5a5a;
+  font-weight: 800;
+  background: rgba(159,34,65,.10);
+  border-right: 1px solid rgba(0,0,0,.06);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.consulta-result td{
+  color: #222;
+  background: #fff;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Responsive tarjetas por fila */
+@media (max-width: 700px){
+  .consulta-result tbody tr{
+    grid-template-columns: 1fr;
+  }
+  .consulta-result th{
+    border-right: 0;
+    border-radius: 10px 10px 0 0;
+  }
+  .consulta-result td{
+    border-radius: 0 0 10px 10px;
+  }
+}
+
+/* Estados */
+.consulta-error{
+  margin-top: 10px;
+  color: #9F2241;
+  font-weight: 800;
+}
+.consulta-loading{
+  margin-top: 10px;
+  color: #6b6b6b;
+  text-align: center;
+}
+
+/* ===== Consulta individual: resultados en dos columnas (desktop) ===== */
+@media (min-width: 900px){
+  .consulta-result{
+    /* un poco más de ancho para evitar cortes en etiquetas largas */
+    max-width: 860px;
+    margin-left: auto;
+  }
+  .consulta-result table{
+    display: block; /* permite maquetar el tbody */
+  }
+  .consulta-result tbody{
+    display: block;
+    column-count: 2;     /* dos columnas balanceadas */
+    column-gap: 20px;
+    column-fill: balance;
+  }
+  .consulta-result tbody tr{
+    /* cada fila como tarjeta que no se parte entre columnas */
+    break-inside: avoid;
+    margin: 0 0 12px;
+  }
+}
+
+/* Consulta individual: que el recuadro de búsqueda no cambie de tamaño en desktop */
+@media (min-width: 980px){
+  .consulta-grid{
+    /* fija la primera columna y evita que se estire con el contenido del resultado */
+    grid-template-columns: 380px minmax(0, 1fr);
+    align-items: start;
+  }
+  .consulta-form{
+    width: 380px;
+    flex: none;
+  }
+}
+
+/* Barra de búsqueda más pequeña y sin empalmes (desktop) */
+@media (min-width: 980px){
+  .consulta-grid{
+    /* ...existing code... */
+    grid-template-columns: 280px minmax(0, 1fr); /* antes 320/380px */
+    column-gap: 32px; /* más espacio entre panel e información */
+    align-items: start;
+  }
+  .consulta-form{
+    /* ...existing code... */
+    width: 280px;      /* antes 320/380px */
+    max-width: 280px;
+    min-width: 280px;
+  }
+  .consulta-form input[type="text"]{
+    max-width: 100%;
+  }
+}
+
+/* ——— Mejorar lectura y evitar saltos de línea en etiquetas ——— */
+.consulta-result th,
+.consulta-result td{
+  /* ...existing code... */
+  padding: 14px 16px;   /* un poco más de aire */
+  line-height: 1.55;
+}
+
+/* Etiquetas sin saltos de línea; si exceden, usar elipsis */
+.consulta-result th{
+  /* override de reglas previas */
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* ——— Resultado en dos columnas con etiqueta más ancha ——— */
+@media (min-width: 900px){
+  .consulta-result{
+    /* ...existing code... */
+    max-width: 1000px; /* más espacio total para etiquetas largas */
+  }
+  .consulta-result tbody{
+    /* ...existing code... */
+    column-gap: 32px;  /* mayor separación entre columnas */
+  }
+  .consulta-result tbody tr{
+    /* ...existing code... */
+    grid-template-columns: 64% 1fr !important; /* etiqueta más ancha para evitar cortes */
+  }
+}
+
+/* Consulta global: lista en tabla (no tarjetas) */
+.consulta-result.list-mode table{
+  display: table !important;
+  width: 100%;
+  border-collapse: collapse;
+}
+.consulta-result.list-mode thead th{
+  background: rgba(159,34,65,.12);
+  color: #4a4a4a;
+  font-weight: 800;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.consulta-result.list-mode tbody{
+  display: table-row-group !important;
+  column-count: initial !important;
+  column-gap: 0 !important;
+}
+.consulta-result.list-mode tbody tr{
+  display: table-row !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+.consulta-result.list-mode tbody td,
+.consulta-result.list-mode tbody th{
+  display: table-cell !important;
+  padding: 10px 12px;
+  vertical-align: top;
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+@media (min-width: 900px){
+  .consulta-result.list-mode{
+    max-width: 1000px; /* similar a consulta individual ajustada */
+  }
+}
+
+/* Barra para subir Excel en index */
+.upload-bar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px auto 20px;
+  padding: 10px 14px;
+  max-width: 1100px;
+  color: #4a4a4a;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.upload-title{
+  font-weight: 800;
+  color: #9F2241;
+  font-size: 16px;
+}
+.upload-control{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.upload-control input[type="file"]{
+  /* ocultar input, mantener accesibilidad */
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.upload-button{
+  display: inline-block;
+  border: 1px solid rgba(159,34,65,0.4);
+  background: #ffffff;
+  color: #9F2241;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+  box-shadow: 0 4px 10px rgba(159,34,65,0.08);
+  font-size: 14px;
+}
+.upload-control:hover .upload-button{
+  background: rgba(159,34,65,0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(159,34,65,0.12);
+}
+.upload-status{
+  font-size: 14px;
+  color: #6b6b6b;
+}
+
+/* Móvil: compactar barra */
+@media (max-width: 900px){
+  .upload-bar{
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+    margin: 8px auto 16px;
+  }
+  .upload-title{ font-size: 15px }
+  .upload-button{ font-size: 13px; padding: 7px 12px }
+  .upload-status{ width: 100%; text-align: center }
+}
+
+/* La barra como una columna-item al final de la derecha */
+.upload-bar.col{
+  flex: 0 0 240px;
+  min-width: 240px;
+  border: 1px solid rgba(91,47,166,.12);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(91,47,166,.08);
+  background: #fff;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px; /* separación respecto al último botón (Zumpango) */
+}
+
+/* Reducir márgenes de la versión de barra global previa */
+.upload-bar{
+  margin: 0;      /* como columna, sin margen extra */
+  padding: 0;     /* sobreescribe el padding general */
+  box-shadow: none;
+  background: transparent;
+  max-width: none;
+  color: inherit;
+  font-family: inherit;
+}
+
+/* Contenido interno de la barra (mantener estilos del control) */
+.upload-title{
+  font-weight: 800;
+  color: #9F2241;
+  font-size: 16px;
+}
+.upload-control{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.upload-control input[type="file"]{
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.upload-button{
+  display: inline-block;
+  border: 1px solid rgba(159,34,65,0.4);
+  background: #ffffff;
+  color: #9F2241;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
+  box-shadow: 0 4px 10px rgba(159,34,65,0.08);
+}
+.upload-control:hover .upload-button{
+  background: rgba(159,34,65,0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(159,34,65,0.12);
+}
+.upload-status{
+  font-size: 14px;
+  color: #6b6b6b;
+}
+
+/* Móvil: la barra se apila como las demás columnas */
+@media (max-width:900px){
+  .upload-bar.col{
+    flex: 1 1 100%;
+    min-width: 100%;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .upload-title{ font-size: 15px }
+  .upload-button{ font-size: 13px; padding: 7px 12px }
+  .upload-status{ width: 100%; text-align: left }
+}
+
+/* Integración visual de la barra en el panel derecho */
+.upload-bar.inline-detail{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px auto 0;
+  padding: 8px 0;
+  justify-content: center;
+}
+.upload-status{
+  max-width: 100%;
+}
+
+/* Oculta suavemente la barra al iniciar carga */
+.upload-bar.inline-detail.hidden{
+  animation: uploadHide .35s ease forwards;
+}
+@keyframes uploadHide{
+  0%{ opacity:1; height:auto }
+  30%{ opacity:.4 }
+  100%{ opacity:0; height:0; margin:0; padding:0; transform:scale(.95) }
+}
+
+/* Contenedor de carga */
+.upload-loading{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  padding:14px 18px;
+  margin:4px 0 10px;
+  border:1px solid rgba(91,47,166,.12);
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 6px 16px rgba(91,47,166,.08);
+  font-family:Arial,Helvetica,sans-serif;
+  animation: fadeIn .35s ease;
+}
+@keyframes fadeIn{
+  from{ opacity:0; transform:translateY(8px) }
+  to{ opacity:1; transform:translateY(0) }
+}
+
+/* Spinner */
+.upload-loading .spinner{
+  width:32px;
+  height:32px;
+  border:4px solid rgba(159,34,65,.15);
+  border-top-color:#9F2241;
+  border-radius:50%;
+  animation: spin .9s linear infinite;
+}
+@keyframes spin{
+  to{ transform:rotate(360deg) }
+}
+
+.upload-loading .upload-msg{
+  font-weight:800;
+  color:#9F2241;
+  font-size:15px;
+  letter-spacing:.3px;
+}
+
+.upload-loading.done .spinner{
+  display:none;
+}
+.upload-loading.done{
+  animation: loadFadeOut .5s ease forwards;
+}
+@keyframes loadFadeOut{
+  to{
+    opacity:0;
+    height:0;
+    margin:0;
+    padding:0;
+    transform:scale(.95);
+  }
+}
+
+/* Móvil: compactar carga */
+@media (max-width:900px){
+  .upload-loading{
+    flex-direction:column;
+    gap:10px;
+    padding:12px 14px;
+  }
+  .upload-loading .upload-msg{ font-size:14px }
+}

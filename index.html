@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Proyecto</title>
+    <link rel="stylesheet" href="./CSS/inicio.css" />
+    <link rel="preload" href="./XLSX/ATNYSEG_150925.xlsx" as="fetch" crossorigin>
+    <link rel="preload" href="./XLSX/SIGASTI_150925.xlsx" as="fetch" crossorigin>
+    <style>
+      /* Centrar botones del panel derecho y mejorar separación */
+      .menu-detail .menu-actions{
+        justify-content: center !important;
+        align-items: center;
+        gap: 16px;
+      }
+      @media (max-width: 900px){
+        .menu-detail .menu-actions{
+          justify-content: center !important;
+          gap: 12px;
+        }
+      }
+    </style>
+    <script>
+      // Al cargar la página, intenta actualizar los archivos Excel desde el backend Node.js
+      window.addEventListener('DOMContentLoaded', function() {
+        fetch('http://localhost:3030/update').catch(()=>{});
+        // Prefetch para navegador (caché HTTP)
+        fetch('./XLSX/ATNYSEG_150925.xlsx', { cache: 'reload' }).catch(()=>{});
+        fetch('./XLSX/SIGASTI_150925.xlsx', { cache: 'reload' }).catch(()=>{});
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Splash -->
+    <div id="splash">
+      <img src="/IMG/Logo.png" alt="Cargando..." />
+    </div>
+
+    <!-- Root React -->
+    <div id="app"></div>
+
+    <!-- React vía CDN + Babel para JSX en navegador -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Agregar script externo para controlar la inserción de "Subir archivos" -->
+    <script src="./JS/upload-card.js"></script>
+
+    <!-- Tu app React -->
+    <script type="text/babel" src="./app.jsx"></script>
+
+    <!-- Opcional: solo si lo necesitas -->
+    <script src="./JS/contador.js"></script>
+  </body>
+</html>

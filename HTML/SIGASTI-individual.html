@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SIGASTI - Consulta individual</title>
+    <link rel="stylesheet" href="../CSS/inicio.css?v=1" />
+    <style>
+      .consulta-result th{
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+      }
+      @media (min-width: 980px){
+        .consulta-page{ max-width:1280px; }
+        .consulta-grid{
+          grid-template-columns:150px minmax(0,1fr);
+          column-gap:64px;
+          align-items:start;
+        }
+        .consulta-form{
+          width:150px;
+          max-width:150px;
+          box-sizing:border-box;
+        }
+        .consulta-form input[type="text"]{
+          width:100%; box-sizing:border-box;
+        }
+        .consulta-result{ max-width:none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Cargar el JSX específico de SIGASTI -->
+    <script type="text/babel" src="./SIGASTI-individual.jsx"></script>
+  </body>
+</html>
