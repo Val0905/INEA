@@ -24,7 +24,16 @@ app.use(express.static(PUBLIC_DIR));
 // Multer: solo .xlsx y límite alto (ajusta si necesitas)
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, XLSX_DIR),
-  filename: (_req, file, cb) => cb(null, file.originalname),
+  filename: (_req, file, cb) => {
+    // Renombrar según prefijo
+    if (file.originalname.startsWith('ATNYSEG')) {
+      cb(null, 'ATNYSEG_150925.xlsx');
+    } else if (file.originalname.startsWith('SIGASTI')) {
+      cb(null, 'SIGASTI_150925.xlsx');
+    } else {
+      cb(null, file.originalname); // fallback
+    }
+  },
 });
 const fileFilter = (_req, file, cb) => {
   if (/\.xlsx$/i.test(file.originalname)) cb(null, true);
