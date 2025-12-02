@@ -14,28 +14,43 @@
       @media (min-width: 980px){
         .consulta-page{ max-width:1280px; }
         .consulta-grid{
-          grid-template-columns:150px minmax(0,1fr);
+          grid-template-columns:150px auto;
           column-gap:64px;
           align-items:start;
+          justify-content: space-around; /* Centra la grilla si hay espacio extra */
         }
         .consulta-form{
           width:150px;
           max-width:150px;
           box-sizing:border-box;
         }
-        .consulta-result{ max-width:none; }
+        .consulta-result{ max-width:none; width:100%; }
       }
       .totales-cert { margin:10px 0 14px; padding:10px 14px; border:1px solid rgba(0,0,0,.08); border-radius:10px; background:#fff; font-size:14px; line-height:1.4 }
       .totales-cert b { color:#9F2241 }
       .consulta-result{
         display: flex;
         flex-direction: column;
-        align-items: center;
+        /* align-items: center; */ /* Se elimina para que el contenido se alinee a la izquierda por defecto */
       }
       .chart-center{
         width:100%;
-        max-width:600px;
+        max-width:500px;
         margin:0 auto;
+      }
+      .result-content {
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+      }
+      .yearly-stats-container {
+        width:100%;
+        max-width:600px;
+        margin: 40px auto 0;
+        padding: 20px;
+        border: 1px solid rgba(0,0,0,.08);
+        border-radius: 10px;
+        background: #fff;
       }
     </style>
   </head>

@@ -20,7 +20,7 @@ const WORKER_SRC = `
       if(type==='warmup'){ await ensureData(excelUrl); self.postMessage({type:'ready'}); return; }
       if(type!=='aggregate') return;
       await ensureData(excelUrl);
-      if(!dataCache || !dataCache.length){ self.postMessage({type:'stats', emitido:0, entregado:0, cancelado:0, total:0}); return; }
+      if(!dataCache || !dataCache.length){ self.postMessage({type:'stats', emitido:0, entregado:0, cancelado:0, total:0, yearlyStats:{}}); return; }
 
       const sample = dataCache[0]||{};
       const czCodeKey = ['iCveCZ','ICveCZ'].find(k=>Object.prototype.hasOwnProperty.call(sample,k));
@@ -33,10 +33,16 @@ const WORKER_SRC = `
       const statusKey = statusKeysGuess.find(k=>Object.prototype.hasOwnProperty.call(sample,k));
       if(!statusKey){ self.postMessage({type:'error', message:'No se encontró columna de estatus (Emitido/Entregado/Cancelado).'}); return; }
 
+      const elaboracionKey = ['fElaboracion','FElaboracion'].find(k=>Object.prototype.hasOwnProperty.call(sample,k));
+      const emisionKey = ['fEmisionCertificado','FEmisionCertificado'].find(k=>Object.prototype.hasOwnProperty.call(sample,k));
+      const entregaKey = ['fEntregaCertificado','FEntregaCertificado'].find(k=>Object.prototype.hasOwnProperty.call(sample,k));
+
       const wantCode = norm(regionCode);
       const wantName = fold(regionName);
 
       let emitido=0, entregado=0, cancelado=0, totalFiltrados=0;
+      const yearlyStats = {};
+      const blankCounts = { elaboracion: 0, emision: 0, entrega: 0 };
 
       for(const r of dataCache){
         if((wantCode || wantName) && (czCodeKey || czNameKey)){
@@ -51,9 +57,41 @@ const WORKER_SRC = `
         if(rawStatus === 'EMITIDO') emitido++;
         else if(rawStatus === 'ENTREGADO') entregado++;
         else if(rawStatus === 'CANCELADO') cancelado++;
+
+        const getYear = (val) => {
+          if(!val) return null;
+          try {
+            if(typeof val === 'number' && val > 1){ // Excel date number
+              return XLSX.SSF.parse_date_code(val).y;
+            }
+            if(typeof val === 'string'){
+              const d = new Date(val);
+              if(!isNaN(d)) return d.getFullYear();
+            }
+          } catch(err){}
+          return null;
+        };
+
+        const yearElaboracion = elaboracionKey ? getYear(r[elaboracionKey]) : null;
+        const yearEmision = emisionKey ? getYear(r[emisionKey]) : null;
+        const yearEntrega = entregaKey ? getYear(r[entregaKey]) : null;
+
+        if(elaboracionKey && !r[elaboracionKey]) blankCounts.elaboracion++;
+        if(emisionKey && !r[emisionKey]) blankCounts.emision++;
+        if(entregaKey && !r[entregaKey]) blankCounts.entrega++;
+
+        const updateYear = (year, key) => {
+          if(!year || year < 2017) return;
+          if(!yearlyStats[year]) yearlyStats[year] = { elaboracion: 0, emision: 0, entrega: 0 };
+          yearlyStats[year][key]++;
+        };
+
+        updateYear(yearElaboracion, 'elaboracion');
+        updateYear(yearEmision, 'emision');
+        updateYear(yearEntrega, 'entrega');
       }
 
-      self.postMessage({type:'stats', emitido, entregado, cancelado, total: totalFiltrados});
+      self.postMessage({type:'stats', emitido, entregado, cancelado, total: totalFiltrados, yearlyStats, blankCounts});
     }catch(err){
       self.postMessage({type:'error', message: err.message || 'Error al procesar el archivo.'});
     }
@@ -96,10 +134,82 @@ function ChartBar({ labels, data, height=360 }){
   return <div style={{height}}><canvas ref={canvasRef}/></div>;
 }
 
+function YearlyStatsTable({ stats, blankCounts }) {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = 2017; y <= currentYear; y++) {
+    years.push(y);
+  }
+
+  const hasData = Object.keys(stats).length > 0;
+
+  if (!hasData) {
+    return null;
+  }
+
+  const totals = { elaboracion: 0, emision: 0, entrega: 0, totalAnual: 0 };
+
+  const yearlyData = years.map(year => {
+    const yearStats = stats[year] || { elaboracion: 0, emision: 0, entrega: 0 };
+    const totalAnual = yearStats.elaboracion + yearStats.emision + yearStats.entrega;
+    totals.elaboracion += yearStats.elaboracion;
+    totals.emision += yearStats.emision;
+    totals.entrega += yearStats.entrega;
+    totals.totalAnual += totalAnual;
+    return { year, ...yearStats, totalAnual };
+  });
+
+  return (
+    <div className="yearly-stats-container">
+      <h3 style={{textAlign:'center', marginTop:0, marginBottom: '20px'}}>Certificados por Año</h3>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9em' }}>
+        <thead>
+          <tr style={{ backgroundColor: '#9F2241', color: 'white' }}>
+            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'left' }}>Año</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>Elaboración</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>Emisión</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>Entrega</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>Total por Año</th>
+          </tr>
+        </thead>
+        <tbody>
+          {yearlyData.map(({ year, elaboracion, emision, entrega, totalAnual }) => (
+            <tr key={year}>
+              <td style={{ padding: '8px', border: '1px solid #ddd', fontWeight: 'bold' }}>{year}</td>
+              <td style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'center' }}>{elaboracion}</td>
+              <td style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'center' }}>{emision}</td>
+              <td style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'center' }}>{entrega}</td>
+              <td style={{ padding: '8px', border: '1px solid #ddd', textAlign: 'center', fontWeight: 'bold' }}>{totalAnual}</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr style={{ backgroundColor: '#f2f2f2', fontWeight: 'bold' }}>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Total General</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>{totals.elaboracion}</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}></td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}></td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}></td>
+          </tr>
+          <tr style={{ backgroundColor: '#f2f2f2', fontWeight: 'bold' }}>
+            <td style={{ padding: '10px', border: '1px solid #ddd' }}>Total en blanco</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>{blankCounts.elaboracion}</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>{blankCounts.emision}</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>{blankCounts.entrega}</td>
+            <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+}
+
 function SigastiGlobal(){
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState('');
   const [stats,setStats]=useState({emitido:0,entregado:0,cancelado:0,total:0});
+  const [yearlyStats, setYearlyStats] = useState({});
+  const [blankCounts, setBlankCounts] = useState({ elaboracion: 0, emision: 0, entrega: 0 });
   const workerRef = useRef(null);
   const workerUrlRef = useRef('');
   const regionRef = useRef({code:'',name:''});
@@ -117,12 +227,14 @@ function SigastiGlobal(){
     workerRef.current=w;
     workerUrlRef.current=url;
     w.onmessage = ev=>{
-      const {type,message,emitido,entregado,cancelado,total}=ev.data||{};
+      const {type,message,emitido,entregado,cancelado,total, yearlyStats, blankCounts}=ev.data||{};
       if(type==='ready') return;
       if(type==='stats'){
         setLoading(false);
         setError('');
         setStats({emitido,entregado,cancelado,total});
+        setYearlyStats(yearlyStats || {});
+        setBlankCounts(blankCounts || { elaboracion: 0, emision: 0, entrega: 0 });
       }else if(type==='error'){
         setLoading(false);
         setError(message||'Error.');
@@ -141,6 +253,8 @@ function SigastiGlobal(){
   function handleConsultar(){
     setError('');
     setStats({emitido:0,entregado:0,cancelado:0,total:0});
+    setYearlyStats({});
+    setBlankCounts({ elaboracion: 0, emision: 0, entrega: 0 });
     if(!workerRef.current){ setError('Worker no disponible.'); return; }
     let abs='';
     try{ abs=new URL(EXCEL_URL,window.location.href).toString(); }
@@ -177,23 +291,26 @@ function SigastiGlobal(){
           {error && <div className="consulta-error">{error}</div>}
         </section>
         <aside className="consulta-result" aria-live="polite">
-          <h3>Certificados por estatus</h3>
-          <div className="totales-cert">
-            <div><b>Emitido:</b> {stats.emitido}</div>
-            <div><b>Entregado:</b> {stats.entregado}</div>
-            <div><b>Cancelado:</b> {stats.cancelado}</div>
-            <hr style={{border:'0',borderTop:'1px solid #eee',margin:'6px 0'}}/>
-            <div><b>Total filtrados:</b> {stats.total}</div>
-          </div>
-          {loading && <div className="consulta-loading">Cargando…</div>}
-          {!loading && stats.total>0 && (
-            <div className="chart-center">
-              <ChartBar labels={labels} data={data} height={360} />
+          <div className="result-content">
+            <h3>Certificados por estatus</h3>
+            <div className="totales-cert">
+              <div><b>Emitido:</b> {stats.emitido}</div>
+              <div><b>Entregado:</b> {stats.entregado}</div>
+              <div><b>Cancelado:</b> {stats.cancelado}</div>
+              <hr style={{border:'0',borderTop:'1px solid #eee',margin:'6px 0'}}/>
+              <div><b>Total filtrados:</b> {stats.total}</div>
             </div>
-          )}
-          {!loading && stats.total===0 && !error && <div style={{color:'#6b6b6b'}}>Sin datos para mostrar.</div>}
+            {loading && <div className="consulta-loading">Cargando…</div>}
+            {!loading && stats.total>0 && (
+              <div className="chart-center">
+                <ChartBar labels={labels} data={data} height={280} />
+              </div>
+            )}
+            {!loading && stats.total===0 && !error && <div style={{color:'#6b6b6b'}}>Sin datos para mostrar.</div>}
+          </div>
         </aside>
       </div>
+      {!loading && stats.total > 0 && <YearlyStatsTable stats={yearlyStats} blankCounts={blankCounts} />}
     </div>
   );
 }
